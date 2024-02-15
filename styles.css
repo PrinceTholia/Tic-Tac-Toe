@@ -1,24 +1,40 @@
-#game {
-  border-collapse: separate;
-  /* Change border-collapse to separate */
-  border-spacing: 5px;
-  /* Add some spacing between cells */
+/* Add styles for the input field */
+#prundepth {
+  padding: 5px;
+  font-size: 16px;
+  margin-top: 10px;
+  width: 150px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
+/* Style the buttons */
+button {
+  margin: 10px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Style the table cells */
+#game {
+  border-collapse: separate;
+  border-spacing: 5px;
+}
 
 #game td {
   border: 1px solid black;
   width: 100px;
-  /* Set the width of table cells to ensure they are squares */
   height: 100px;
-  /* Set the height of table cells to ensure they are squares */
   text-align: center;
   cursor: pointer;
-}
-
-#game td.X,
-#game td.O {
-  cursor: default;
 }
 
 #game td.X {
@@ -33,11 +49,8 @@
 #game td.O:after {
   content: "X";
   font-size: 48px;
-  /* Adjust the font size to fit the content within the cells */
   line-height: 100px;
-  /* Match line height to cell height for vertical alignment */
 }
-
 
 #game.inactive {
   background: silver;
