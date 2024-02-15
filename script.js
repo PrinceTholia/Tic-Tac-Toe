@@ -119,10 +119,16 @@ class TicTacToe {
         
         // Update the display and wait for a short delay before CPU's move
         display();
-        setTimeout(() => {
+        var startTime = performance.now();
             game.play(game.goodMove()); // Make a move using the Minimax algorithm
+        var endTime = performance.now();
+
+// Calculate the elapsed time
+var elapsedTime = endTime - startTime;
+
+console.log("Elapsed time: " + elapsedTime + " milliseconds");
             display(); // Update the display after the move
-        }, 500); // Artificial delay before CPU move is calculated and played
+        
     }
 
     // Function to handle human player's move
