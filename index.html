@@ -21,6 +21,21 @@
   <label for="prundepth">Enter Pruning Depth:</label>
   <input type="number" id="prundepth" name="prundepth">
   <button id="Prunning">Apply Pruning</button>
-  <script src="script.js"></script>
+  <script>
+    // Get the timing element
+    const timingElement = document.getElementById("timing");
+
+    // Function to update timing information
+    function updateTiming() {
+      const currentTime = new Date();
+      timingElement.textContent = "Current time: " + currentTime.toLocaleTimeString();
+    }
+
+    // Call the updateTiming function initially
+    updateTiming();
+
+    // Update timing every second
+    setInterval(updateTiming, 1000);
+  </script>
 </body>
 </html>
