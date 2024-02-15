@@ -79,14 +79,14 @@ class TicTacToe {
     }
 }
 
+// Immediately invoked function expression (IIFE) to encapsulate the code and prevent global scope pollution
 (function() {
     // Get references to HTML elements
     const table = document.getElementById("game"); // Table element representing the game board
     const btnNewGame = document.getElementById("newgame"); // Button to start a new game
     const btnCpuMove = document.getElementById("cpumove"); // Button to let CPU play a move
     const messageArea = document.getElementById("message"); // Area to display game messages
-    const timingArea = document.getElementById("timing"); // Area to display timing information
-
+    const btnUndoMove = document.querySelector("#undoMove");
     // Initialize game and player variables
     let game, human;
 
@@ -117,14 +117,12 @@ class TicTacToe {
         // Determine the human player's number
         human = 3 - game.turn;
         
-        // Update the display and let CPU play its move
+        // Update the display and wait for a short delay before CPU's move
         display();
-        const startTime = performance.now(); // Record start time
-        game.play(game.goodMove()); // Make a move using the Minimax algorithm
-        const endTime = performance.now(); // Record end time
-        const timeTaken = endTime - startTime; // Calculate time taken
-        timingArea.textContent = `Time taken for CPU move: ${timeTaken.toFixed(2)} milliseconds`; // Display timing information
-        display(); // Update the display after the move
+        setTimeout(() => {
+            game.play(game.goodMove()); // Make a move using the Minimax algorithm
+            display(); // Update the display after the move
+        }, 500); // Artificial delay before CPU move is calculated and played
     }
 
     // Function to handle human player's move
@@ -143,7 +141,6 @@ class TicTacToe {
         game = new TicTacToe();
         human = 1; // Set human player as player 1 by default
         display(); // Update the display for the new game
-        timingArea.textContent = ''; // Clear timing information
     }
 
     // Event listener for clicking on a cell in the game board
@@ -164,6 +161,13 @@ class TicTacToe {
     // Event listener for the "Let CPU play a move" button
     btnCpuMove.addEventListener("click", computerMove);
 
+    btnUndoMove.addEventListener("click", () => {
+        if (game.takeBack()) {
+            display(); // Update the game display after undoing the move
+        } else {
+            console.log("No moves to undo.");
+        }
+    });
     // Start a new game when the page is loaded
     newGame();
 })();
