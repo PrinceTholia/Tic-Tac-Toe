@@ -117,16 +117,14 @@ class TicTacToe {
         // Determine the human player's number
         human = 3 - game.turn;
         
-        // Update the display and wait for a short delay before CPU's move
+        // Update the display and let CPU play its move
         display();
         const startTime = performance.now(); // Record start time
-        setTimeout(() => {
-            game.play(game.goodMove()); // Make a move using the Minimax algorithm
-            const endTime = performance.now(); // Record end time
-            const timeTaken = endTime - startTime; // Calculate time taken
-            timingArea.textContent = `Time taken for CPU move: ${timeTaken.toFixed(2)} milliseconds`; // Display timing information
-            display(); // Update the display after the move
-        }, 500); // Artificial delay before CPU move is calculated and played
+        game.play(game.goodMove()); // Make a move using the Minimax algorithm
+        const endTime = performance.now(); // Record end time
+        const timeTaken = endTime - startTime; // Calculate time taken
+        timingArea.textContent = `Time taken for CPU move: ${timeTaken.toFixed(2)} milliseconds`; // Display timing information
+        display(); // Update the display after the move
     }
 
     // Function to handle human player's move
@@ -169,4 +167,3 @@ class TicTacToe {
     // Start a new game when the page is loaded
     newGame();
 })();
-
