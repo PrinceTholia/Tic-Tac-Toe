@@ -94,7 +94,6 @@ class TicTacToe {
     }
 }
 
-// Immediately invoked function expression (IIFE) to encapsulate the code and prevent global scope pollution
 (function() {
     // Get references to HTML elements
     const table = document.getElementById("game"); // Table element representing the game board
@@ -104,6 +103,7 @@ class TicTacToe {
     const btnUndoMove = document.querySelector("#undoMove");
     const btnPrune = document.getElementById("Prunning"); // Button to apply pruning
     const pruneDepthInput = document.getElementById("prundepth"); // Input field for pruning depth
+    const timingArea = document.getElementById("timing"); // Area to display timing information
 
     // Initialize game and player variables
     let game, human;
@@ -137,10 +137,15 @@ class TicTacToe {
         
         // Update the display and wait for a short delay before CPU's move
         display();
+        const startTime = performance.now(); // Record start time
         setTimeout(() => {
             const depth = parseInt(pruneDepthInput.value) || 3; // Get pruning depth from input field
-            game.play(game.goodMove(depth)); // Make a move using the Minimax algorithm with pruning
+            const move = game.goodMove(depth); // Make a move using the Minimax algorithm with pruning
+            game.play(move); // Play the move
             display(); // Update the display after the move
+            const endTime = performance.now(); // Record end time
+            const timeTaken = endTime - startTime; // Calculate time taken
+            timingArea.textContent = `Time taken for CPU move: ${timeTaken.toFixed(2)} milliseconds`; // Display timing information
         }, 500); // Artificial delay before CPU move is calculated and played
     }
 
@@ -160,6 +165,7 @@ class TicTacToe {
         game = new TicTacToe();
         human = 1; // Set human player as player 1 by default
         display(); // Update the display for the new game
+        timingArea.textContent = ''; // Clear timing information
     }
 
     // Event listener for clicking on a cell in the game board
@@ -198,3 +204,4 @@ class TicTacToe {
     // Start a new game when the page is loaded
     newGame();
 })();
+
