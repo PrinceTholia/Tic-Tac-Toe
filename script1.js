@@ -44,56 +44,54 @@ class TicTacToe {
         return true; // Return true indicating a successful undo
     }
 
-    // Method implementing the Minimax algorithm to find the best move with alpha-beta pruning
-    minimax(depth, alpha, beta, maximizingPlayer) {
-        // Base cases: return values for win/loss/draw states or reaching the depth limit
+    // Method implementing the Minimax algorithm with alpha-beta pruning to find the best move
+    minimax(alpha = -Infinity, beta = Infinity, depth = Infinity) {
+        // Base cases: return values for win/loss/draw states or reaching max depth
         if (this.isWin || this.isDraw || depth === 0) {
-            if (this.isWin) return { value: maximizingPlayer ? -10 + depth : 10 - depth };
+            if (this.isWin) return { value: -10 };
             if (this.isDraw) return { value: 0 };
+            return { value: 0 }; // Return 0 at max depth
         }
         
         // Initialize the best move value
-        let best = { value: maximizingPlayer ? -Infinity : Infinity };
+        let best = { value: -Infinity };
         
         // Iterate over valid moves and recursively evaluate each move
         for (let move of this.validMoves) {
-            // Make the move
-            this.play(move);
+            // Make the move and recursively call minimax to evaluate the move
+            this.play(move); // Make the move
+            let {value} = this.minimax(alpha, beta, depth - 1); // Recursively call minimax to evaluate the move
+            this.takeBack(); // Undo the move
             
-            // Recursively call minimax to evaluate the move
-            let value = this.minimax(depth - 1, alpha, beta, !maximizingPlayer).value;
-
-            // Undo the move
-            this.takeBack();
-
-            // Update alpha and beta for pruning
-            if (maximizingPlayer) {
-                best.value = Math.max(best.value, value);
-                alpha = Math.max(alpha, value);
-            } else {
-                best.value = Math.min(best.value, value);
-                beta = Math.min(beta, value);
-            }
-
-            // Perform pruning
-            if (beta <= alpha) break;
-
+            // Reduce and negate the value (shorter paths to wins are prioritized)
+            value = value ? (Math.abs(value) - 1) * Math.sign(-value) : 0;
+            
             // Update the best move if the current move is better or equally good
-            if ((maximizingPlayer && value >= best.value) || (!maximizingPlayer && value <= best.value)) {
-                if (value !== best.value) best.moves = [];
+            if (value >= best.value) {
+                if (value > best.value) best = { value, moves: [] };
                 best.moves.push(move);
             }
+            
+            // Implement alpha-beta pruning
+            if (this.turn === 1) { // Maximizer's turn
+                alpha = Math.max(alpha, value);
+            } else { // Minimizer's turn
+                beta = Math.min(beta, value);
+            }
+            if (beta <= alpha) break; // Beta cutoff
         }
         return best; // Return the best move
     }
 
     // Method to select a good move randomly from equally valued moves
-    goodMove(depth) {
-        let {moves} = this.minimax(depth, -Infinity, Infinity, true); // Get equally valued moves from minimax
+    goodMove() {
+        const pruningDepth = parseInt(document.getElementById("prundepth").value);
+        let {moves} = this.minimax(-Infinity, Infinity, pruningDepth); // Get equally valued moves from minimax
         return moves[Math.floor(Math.random() * moves.length)]; // Select a random move
     }
 }
 
+// Immediately invoked function expression (IIFE) to encapsulate the code and prevent global scope pollution
 (function() {
     // Get references to HTML elements
     const table = document.getElementById("game"); // Table element representing the game board
@@ -101,10 +99,6 @@ class TicTacToe {
     const btnCpuMove = document.getElementById("cpumove"); // Button to let CPU play a move
     const messageArea = document.getElementById("message"); // Area to display game messages
     const btnUndoMove = document.querySelector("#undoMove");
-    const btnPrune = document.getElementById("Prunning"); // Button to apply pruning
-    const pruneDepthInput = document.getElementById("prundepth"); // Input field for pruning depth
-    const timingArea = document.getElementById("timing"); // Area to display timing information
-
     // Initialize game and player variables
     let game, human;
 
@@ -137,15 +131,9 @@ class TicTacToe {
         
         // Update the display and wait for a short delay before CPU's move
         display();
-        const startTime = performance.now(); // Record start time
         setTimeout(() => {
-            const depth = parseInt(pruneDepthInput.value) || 3; // Get pruning depth from input field
-            const move = game.goodMove(depth); // Make a move using the Minimax algorithm with pruning
-            game.play(move); // Play the move
+            game.play(game.goodMove()); // Make a move using the Minimax algorithm
             display(); // Update the display after the move
-            const endTime = performance.now(); // Record end time
-            const timeTaken = endTime - startTime; // Calculate time taken
-            timingArea.textContent = `Time taken for CPU move: ${timeTaken.toFixed(2)} milliseconds`; // Display timing information
         }, 500); // Artificial delay before CPU move is calculated and played
     }
 
@@ -165,7 +153,6 @@ class TicTacToe {
         game = new TicTacToe();
         human = 1; // Set human player as player 1 by default
         display(); // Update the display for the new game
-        timingArea.textContent = ''; // Clear timing information
     }
 
     // Event listener for clicking on a cell in the game board
@@ -186,7 +173,6 @@ class TicTacToe {
     // Event listener for the "Let CPU play a move" button
     btnCpuMove.addEventListener("click", computerMove);
 
-    // Event listener for the "Undo Move" button
     btnUndoMove.addEventListener("click", () => {
         if (game.takeBack()) {
             display(); // Update the game display after undoing the move
@@ -194,14 +180,6 @@ class TicTacToe {
             console.log("No moves to undo.");
         }
     });
-
-    // Event listener for the "Apply Pruning" button
-    btnPrune.addEventListener("click", () => {
-        const depth = parseInt(pruneDepthInput.value) || 3; // Get pruning depth from input field
-        console.log(`Pruning depth set to: ${depth}`);
-    });
-
     // Start a new game when the page is loaded
     newGame();
 })();
-
