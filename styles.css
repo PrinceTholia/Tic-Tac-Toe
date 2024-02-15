@@ -55,3 +55,9 @@ button:hover {
 #game.inactive {
   background: silver;
 }
+
+/* Style the timing information */
+#timing {
+  margin-top: 10px;
+  font-size: 14px;
+}
